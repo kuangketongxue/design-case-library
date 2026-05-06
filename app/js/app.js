@@ -66,7 +66,7 @@ const App = {
     });
 
     const appEl = document.getElementById('app');
-    const total = (await imageDB.getAllImages()).length;
+    const total = data.total;
     if (total > 0) {
       appEl.classList.add('has-images');
     } else {

@@ -9,7 +9,6 @@ const Search = {
       this.debounceTimer = setTimeout(() => {
         Filters.activeCategory = null;
         Filters.activeTag = null;
-        Filters.refresh();
         App.refreshGallery();
       }, 250);
     });

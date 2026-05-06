@@ -1,4 +1,6 @@
 // importer.js — 拖拽 + 文件对话框导入
+const IMAGE_FILE_RE = /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i;
+
 const Importer = {
   init() {
     const dropZone = document.getElementById('drop-zone');
@@ -12,7 +14,7 @@ const Importer = {
     mainEl.addEventListener('drop', async (e) => {
       e.preventDefault();
       dropZone.classList.remove('drag-over');
-      const files = [...e.dataTransfer.files].filter(f => /\.(jpg|jpeg|png|gif|webp|bmp|svg)$/i.test(f.name));
+      const files = [...e.dataTransfer.files].filter(f => IMAGE_FILE_RE.test(f.name));
       if (files.length) await this.importFiles(files.map(f => f.path));
     });
 

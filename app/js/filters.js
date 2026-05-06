@@ -10,17 +10,16 @@ const Filters = {
   async renderCategories() {
     const list = document.getElementById('category-list');
     const categories = await imageDB.getCategories();
-    const allImages = await imageDB.getAllImages();
+    const totalCount = categories.reduce((sum, c) => sum + c.count, 0);
     list.textContent = '';
 
-    // 全部
     const allLi = document.createElement('li');
     if (!this.activeCategory) allLi.className = 'active';
     const allText = document.createElement('span');
     allText.textContent = '全部图片';
     const allCount = document.createElement('span');
     allCount.className = 'cat-count';
-    allCount.textContent = String(allImages.length);
+    allCount.textContent = String(totalCount);
     allLi.append(allText, allCount);
     allLi.addEventListener('click', () => { Filters.activeCategory = null; Filters.apply(); });
     list.appendChild(allLi);

@@ -143,16 +143,21 @@ const Detail = {
     this.saveMetadata();
   },
 
-  async saveMetadata() {
-    if (!this.currentImage) return;
-    this.currentImage.title = document.getElementById('info-title').value;
-    this.currentImage.description = document.getElementById('info-description').value;
-    this.currentImage.source = document.getElementById('info-source').value;
-    this.currentImage.category = document.getElementById('info-category').value;
-    this.currentImage.updatedAt = new Date().toISOString();
-    await imageDB.updateImage(this.currentImage);
-    App.refreshGallery();
-    Filters.refresh();
+  _saveTimer: null,
+
+  saveMetadata() {
+    clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(async () => {
+      if (!this.currentImage) return;
+      this.currentImage.title = document.getElementById('info-title').value;
+      this.currentImage.description = document.getElementById('info-description').value;
+      this.currentImage.source = document.getElementById('info-source').value;
+      this.currentImage.category = document.getElementById('info-category').value;
+      this.currentImage.updatedAt = new Date().toISOString();
+      await imageDB.updateImage(this.currentImage);
+      App.refreshGallery();
+      Filters.refresh();
+    }, 300);
   },
 
   confirmDelete() {
