@@ -18,7 +18,6 @@ app/
     components.css      — 卡片、标签、按钮、弹窗样式
   js/
     db.js               — IndexedDB 单例（images/tags/collections）
-    ipc.js              — window.electronAPI 封装
     thumbnails.js       — Canvas 缩略图生成
     gallery.js          — 网格视图 + 分页
     importer.js         — 拖拽 + 文件对话框导入
