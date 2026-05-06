@@ -1,0 +1,29 @@
+{
+  "name": "design-case-library",
+  "version": "1.0.0",
+  "description": "本地设计灵感收藏工具",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.design-case-library",
+    "productName": "设计案例库",
+    "files": [
+      "app/**/*",
+      "electron/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "dir"
+      ]
+    }
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}

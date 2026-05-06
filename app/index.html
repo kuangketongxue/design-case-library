@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设计案例库</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 侧边栏 -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <h1 class="app-title">设计案例库</h1>
+      </div>
+
+      <div class="sidebar-search">
+        <input type="text" id="search-input" placeholder="搜索标签、标题..." autocomplete="off">
+      </div>
+
+      <nav class="sidebar-section">
+        <h3 class="section-title">分类</h3>
+        <ul id="category-list"></ul>
+      </nav>
+
+      <nav class="sidebar-section">
+        <h3 class="section-title">标签</h3>
+        <div id="tag-cloud"></div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button id="import-btn" class="btn btn-primary btn-block">
+          <span class="icon">+</span> 导入图片
+        </button>
+        <div id="stats" class="stats-bar"></div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main id="main">
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <span id="filter-label" class="filter-label">全部图片</span>
+        </div>
+        <div class="toolbar-right">
+          <select id="sort-select" class="select-input">
+            <option value="importedAt-desc">最新导入</option>
+            <option value="importedAt-asc">最早导入</option>
+            <option value="title-asc">标题 A→Z</option>
+            <option value="rating-desc">评分最高</option>
+          </select>
+          <div class="grid-size-control">
+            <button class="btn btn-icon grid-size-btn" data-size="small" title="小图">▪</button>
+            <button class="btn btn-icon grid-size-btn active" data-size="medium" title="中图">■</button>
+            <button class="btn btn-icon grid-size-btn" data-size="large" title="大图">▮</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 拖拽导入区域（初始状态 / 空状态） -->
+      <div id="drop-zone" class="drop-zone">
+        <div class="drop-zone-content">
+          <div class="drop-icon">📷</div>
+          <p class="drop-text">拖拽图片到这里导入</p>
+          <p class="drop-hint">或点击侧边栏「导入图片」按钮</p>
+        </div>
+      </div>
+
+      <!-- 图片网格 -->
+      <div id="gallery" class="gallery"></div>
+
+      <!-- 分页 -->
+      <div id="pagination" class="pagination"></div>
+    </main>
+  </div>
+
+  <!-- 详情弹窗 -->
+  <div id="detail-modal" class="modal-overlay" hidden>
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div class="modal-body">
+        <div class="modal-image-area">
+          <div class="modal-image-wrapper" id="modal-image-wrapper">
+            <img id="modal-image" src="" alt="">
+          </div>
+          <div class="zoom-controls">
+            <button class="btn btn-icon" id="zoom-in" title="放大">+</button>
+            <button class="btn btn-icon" id="zoom-reset" title="重置">1:1</button>
+            <button class="btn btn-icon" id="zoom-out" title="缩小">−</button>
+          </div>
+        </div>
+        <div class="modal-info">
+          <div class="info-field">
+            <label>标题</label>
+            <input type="text" id="info-title" class="field-input">
+          </div>
+          <div class="info-field">
+            <label>分类</label>
+            <select id="info-category" class="select-input"></select>
+          </div>
+          <div class="info-field">
+            <label>标签</label>
+            <div id="info-tags" class="tag-editor"></div>
+          </div>
+          <div class="info-field">
+            <label>评分</label>
+            <div id="info-rating" class="rating-stars"></div>
+          </div>
+          <div class="info-field">
+            <label>描述</label>
+            <textarea id="info-description" class="field-input" rows="3"></textarea>
+          </div>
+          <div class="info-field">
+            <label>来源</label>
+            <input type="text" id="info-source" class="field-input">
+          </div>
+          <div class="info-meta">
+            <span id="info-dimensions"></span>
+            <span id="info-date"></span>
+          </div>
+          <div class="info-actions">
+            <button class="btn btn-ghost" id="btn-show-in-folder">在文件夹中显示</button>
+            <button class="btn btn-danger" id="btn-delete-image">删除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 删除确认 -->
+  <div id="confirm-dialog" class="modal-overlay confirm-overlay" hidden>
+    <div class="confirm-box">
+      <p>确定要删除这张图片吗？此操作不可撤销。</p>
+      <div class="confirm-actions">
+        <button class="btn btn-ghost" id="confirm-cancel">取消</button>
+        <button class="btn btn-danger" id="confirm-ok">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/ipc.js"></script>
+  <script src="js/thumbnails.js"></script>
+  <script src="js/gallery.js"></script>
+  <script src="js/importer.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/detail.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
