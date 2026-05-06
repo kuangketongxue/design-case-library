@@ -25,27 +25,16 @@ const App = {
       const files = await window.electronAPI.listSeedFiles();
       if (!files || !files.length) return;
       for (const src of files) {
-        const result = await IPC.importImage(src);
-        const dataUrl = await IPC.readImage(result.filePath);
+        const result = await window.electronAPI.importImage(src);
+        const dataUrl = await window.electronAPI.readImageDataUrl(result.filePath);
         const thumb = await Thumbnails.generate(dataUrl);
-        const entry = {
-          id: result.id,
-          filename: result.filename,
-          filePath: result.filePath,
-          mimeType: dataUrl.split(';')[0].split(':')[1],
-          thumbnail: thumb.thumbnail,
-          width: thumb.width,
-          height: thumb.height,
-          title: result.filename.replace(/\.[^.]+$/, '').replace(/^\d+-/, ''),
-          description: '',
+        const title = result.filename.replace(/\.[^.]+$/, '').replace(/^\d+-/, '');
+        await imageDB.putImage(createEntry(result, dataUrl, thumb, {
+          title,
           category: '配色参考',
           tags: ['渐变', '配色'],
-          rating: 3,
-          source: '',
-          importedAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        await imageDB.addImage(entry);
+          rating: 3
+        }));
       }
     } catch (err) {
       console.error('Seed import failed:', err);

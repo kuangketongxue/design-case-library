@@ -35,7 +35,7 @@ const imageDB = {
 
   invalidateCache() { this._imagesCache = null; },
 
-  async addImage(entry) {
+  async putImage(entry) {
     this.ensureDB();
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction('images', 'readwrite');
@@ -59,20 +59,11 @@ const imageDB = {
     if (this._imagesCache) return this._imagesCache;
     return new Promise((resolve, reject) => {
       const req = this.db.transaction('images').objectStore('images').getAll();
-      req.onsuccess = () => { this._imagesCache = req.result; resolve(req.result); };
+      req.onsuccess = () => { this._imagesCache = [...req.result]; resolve(this._imagesCache); };
       req.onerror = (e) => reject(e.target.error);
     });
   },
 
-  async updateImage(entry) {
-    this.ensureDB();
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction('images', 'readwrite');
-      tx.objectStore('images').put(entry);
-      tx.oncomplete = () => { this.invalidateCache(); resolve(); };
-      tx.onerror = (e) => reject(e.target.error);
-    });
-  },
 
   async deleteImage(id) {
     this.ensureDB();
@@ -99,13 +90,13 @@ const imageDB = {
     let items = query ? await this.searchImages(query) : await this.getAllImages();
     if (category) items = items.filter(i => i.category === category);
     if (tag) items = items.filter(i => (i.tags || []).includes(tag));
+    const normalize = sortBy === 'rating' ? v => v || 0
+      : sortBy === 'title' ? v => (v || '').toLowerCase()
+      : v => v;
+    const dir = sortOrder === 'asc' ? 1 : -1;
     items.sort((a, b) => {
-      let va = a[sortBy], vb = b[sortBy];
-      if (sortBy === 'rating') { va = va || 0; vb = vb || 0; }
-      if (sortBy === 'title') { va = (va || '').toLowerCase(); vb = (vb || '').toLowerCase(); }
-      if (va < vb) return sortOrder === 'asc' ? -1 : 1;
-      if (va > vb) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
+      const va = normalize(a[sortBy]), vb = normalize(b[sortBy]);
+      return va < vb ? -dir : va > vb ? dir : 0;
     });
     const total = items.length;
     const start = (page - 1) * pageSize;

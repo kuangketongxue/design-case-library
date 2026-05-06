@@ -15,7 +15,7 @@ const Detail = {
 
     document.getElementById('btn-delete-image').addEventListener('click', () => this.confirmDelete());
     document.getElementById('btn-show-in-folder').addEventListener('click', () => {
-      if (this.currentImage) IPC.showInFolder(this.currentImage.filePath);
+      if (this.currentImage) window.electronAPI.showInFolder(this.currentImage.filePath);
     });
 
     // 评分
@@ -92,7 +92,7 @@ const Detail = {
     const modal = document.getElementById('detail-modal');
     const img = document.getElementById('modal-image');
 
-    const dataUrl = await IPC.readImage(this.currentImage.filePath);
+    const dataUrl = await window.electronAPI.readImageDataUrl(this.currentImage.filePath);
     img.src = dataUrl || this.currentImage.thumbnail;
     img.style.transform = '';
 
@@ -104,10 +104,14 @@ const Detail = {
     document.getElementById('info-date').textContent =
       new Date(this.currentImage.importedAt).toLocaleDateString('zh-CN');
 
-    // 分类下拉
     const catSelect = document.getElementById('info-category');
     catSelect.textContent = '';
-    ['未分类', '海报设计', 'UI设计', '插画', '字体设计', '品牌设计', '包装设计', '排版', '配色参考'].forEach(c => {
+    const categories = await imageDB.getCategories();
+    const catNames = categories.map(c => c.name);
+    if (this.currentImage.category && !catNames.includes(this.currentImage.category)) {
+      catNames.unshift(this.currentImage.category);
+    }
+    catNames.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c;
       opt.textContent = c;
@@ -154,7 +158,7 @@ const Detail = {
       this.currentImage.source = document.getElementById('info-source').value;
       this.currentImage.category = document.getElementById('info-category').value;
       this.currentImage.updatedAt = new Date().toISOString();
-      await imageDB.updateImage(this.currentImage);
+      await imageDB.putImage(this.currentImage);
       App.refreshGallery();
       Filters.refresh();
     }, 300);
@@ -167,7 +171,7 @@ const Detail = {
     document.getElementById('confirm-ok').onclick = async () => {
       dialog.hidden = true;
       if (Detail.currentImage) {
-        await IPC.deleteFile(Detail.currentImage.filePath);
+        await window.electronAPI.deleteImageFile(Detail.currentImage.filePath);
         await imageDB.deleteImage(Detail.currentImage.id);
         Detail.close();
         App.refreshGallery();
